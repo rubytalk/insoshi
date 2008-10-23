@@ -176,11 +176,11 @@ describe Person do
 
       before(:each) do
         @kelly = people(:kelly)
-        Connection.connect(@person, @contact)
-        Connection.connect(@kelly, @contact)
       end
 
-      it "should have common contacts with someone" do
+      it "should have a contact in common" do
+        Connection.connect(@person, @contact)
+        Connection.connect(@kelly, @contact)
         @person.common_contacts_with(@kelly).should contain(@contact)
       end
 
