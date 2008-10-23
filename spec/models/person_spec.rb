@@ -181,16 +181,7 @@ describe Person do
       end
 
       it "should have common contacts with someone" do
-        common_contacts = @person.common_contacts_with(@kelly)
-        common_contacts.size.should == 1
-        common_contacts.should be_a_kind_of(WillPaginate::Collection)
-        common_contacts.should == [@contact]
-      end
-
-      it "should not include non-common contacts" do
-        admin = people(:admin)
-        Connection.connect(@person, admin)
-        @person.common_contacts_with(@kelly).should_not contain(admin)
+        @person.common_contacts_with(@kelly).should contain(@contact)
       end
 
       it "should exclude deactivated people from common contacts" do
@@ -204,17 +195,7 @@ describe Person do
         @contact.email_verified = false; @contact.save!
         common_contacts = @person.common_contacts_with(@kelly)
         common_contacts.should be_empty
-      end
-      
-      it "should exclude the person being viewed" do
-        Connection.connect(@person, @kelly)
-        @person.common_contacts_with(@kelly).should_not contain(@kelly)
-      end
-      
-      it "should exclude the person doing the viewing" do
-        Connection.connect(@person, @kelly)
-        @person.common_contacts_with(@kelly).should_not contain(@person)
-      end
+      end      
     end
   end
 

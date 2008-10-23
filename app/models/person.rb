@@ -372,11 +372,17 @@ class Person < ActiveRecord::Base
     end
   end
 
-  # Return the common connections with the given person.
-  def common_contacts_with(person, options = {})
-    # I tried to do this in SQL for efficiency, but failed miserably.
-    # Horrifyingly, MySQL lacks support for the INTERSECT keyword.
-    (contacts & person.contacts).paginate(options)
+  # Return the common contacts with the given person.
+  def common_contacts_with(other_person)
+    sql = %(SELECT DISTINCT contact_id FROM connections
+            INNER JOIN people contact ON connections.contact_id = contact.id
+            WHERE ((person_id = ? OR person_id = ?)
+                   AND status = ? AND
+                   contact.deactivated = ? AND
+                   (contact.email_verified IS NULL
+                    OR contact.email_verified = ?)))
+    conditions = [sql, id, other_person.id, Connection::ACCEPTED, false, true]
+    Person.find(Connection.find_by_sql(conditions).map(&:contact_id))
   end
   
   protected
