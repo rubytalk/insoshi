@@ -183,6 +183,11 @@ describe Person do
         Connection.connect(@kelly, @contact)
         @person.common_contacts_with(@kelly).should contain(@contact)
       end
+      
+      it "should not include non-common contacts" do
+        Connection.connect(@person, @contact)
+        @person.common_contacts_with(@kelly).should_not contain(@contact)
+      end
 
       it "should exclude deactivated people from common contacts" do
         @contact.toggle!(:deactivated)
